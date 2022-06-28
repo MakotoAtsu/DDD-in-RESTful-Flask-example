@@ -12,5 +12,5 @@ class Todo_Task():
         return self
 
     def change_task_status(self, isComplete: bool):
-        self.status = isComplete
+        self.status = bool(isComplete)
         return self

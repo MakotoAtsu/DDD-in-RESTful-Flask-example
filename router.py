@@ -1,18 +1,20 @@
-from typing import Any
 from flask import Blueprint, jsonify, request
-from service import create_new_task, get_all_tasks, remove_task, update_task_status
+from service import create_new_task, get_all_tasks, remove_task, update_task
 
 task_router = Blueprint('Task', __name__)
 
 
-def get_body_value(body: Any, key: str):
+def get_body_value(key: str):
+    body = request.get_json()
+    if (not body):
+        raise KeyError(f'Body is required')
     if (key not in body):
         raise KeyError(f'Missing required parameter : {key}')
     return body[key]
 
 
 @task_router.route('/tasks', methods=['GET'])
-def list_all_tasks():
+def list():
     """
     Get all todo tasks
     ---
@@ -36,7 +38,7 @@ def list_all_tasks():
                         $ref: '#/definitions/Todo_Task'
 
     responses:
-        201:
+        200:
             description: all exist todo tasks
             schema:
                 $ref: '#/definitions/list_tasks_response'
@@ -49,7 +51,7 @@ def list_all_tasks():
 
 
 @task_router.route('/task', methods=['POST'])
-def create_task():
+def create():
     """
     Create a new todo task
     ---
@@ -80,21 +82,19 @@ def create_task():
 
     """
 
-    body = request.get_json()
-    if not body:
-        return 'require body', 400
-    name = body['name']
-    if not name:
-        return 'Missing parameter : \'name\''
+    try:
+        name = get_body_value('name')
+        task = create_new_task(name)
+        return jsonify({
+            'result': task
+        }), 201
 
-    task = create_new_task(name)
-    return jsonify({
-        'result': task
-    })
+    except KeyError as err:
+        return err.args[0], 400
 
 
 @task_router.route('/task/<int:task_id>', methods=['PUT'])
-def update_task(task_id: int):
+def update(task_id: int):
     """
     Update a specific todo task info
     ---
@@ -123,20 +123,13 @@ def update_task(task_id: int):
                 $ref: '#/definitions/todo_task_response'
 
     """
-    body = request.get_json()
-
-    if not body:
-        return 'body is required', 400
-
-    if not body['id'] or body['id'] != task_id:
-        return "body's id is not match path"
-
-    name = ''
-    status = True
 
     try:
-        name = get_body_value(body, 'name')
-        status_num = get_body_value(body, 'status')
+        if get_body_value('id') != task_id:
+            raise KeyError("body's id is not match path")
+
+        name = get_body_value('name')
+        status_num = get_body_value('status')
         if (status_num == 1):
             status = True
         elif (status_num == 0):
@@ -144,7 +137,7 @@ def update_task(task_id: int):
         else:
             raise KeyError("The value of status must be '1' or '2'")
 
-        task = update_task_status(task_id, name, status)
+        task = update_task(task_id, name, status)
 
         return jsonify({
             'result': task
@@ -156,7 +149,7 @@ def update_task(task_id: int):
 
 
 @task_router.route('/task/<int:task_id>', methods=['DELETE'])
-def delete_task(task_id: int):
+def delete(task_id: int):
     """
     delete a specific todo task 
     ---
@@ -172,4 +165,4 @@ def delete_task(task_id: int):
     """
 
     remove_task(task_id)
-    return '', 200
+    return ''
