@@ -1,6 +1,14 @@
+from typing import Any
 from flask import Blueprint, jsonify, request
+from service import create_new_task, get_all_tasks, remove_task, update_task_status
 
 task_router = Blueprint('Task', __name__)
+
+
+def get_body_value(body: Any, key: str):
+    if (key not in body):
+        raise KeyError(f'Missing required parameter : {key}')
+    return body[key]
 
 
 @task_router.route('/tasks', methods=['GET'])
@@ -34,8 +42,10 @@ def list_all_tasks():
                 $ref: '#/definitions/list_tasks_response'
 
     """
-
-    return 'OK - ALL Tasks'
+    tasks = get_all_tasks()
+    return jsonify({
+        "result": tasks
+    })
 
 
 @task_router.route('/task', methods=['POST'])
@@ -71,7 +81,16 @@ def create_task():
     """
 
     body = request.get_json()
-    return jsonify(body)
+    if not body:
+        return 'require body', 400
+    name = body['name']
+    if not name:
+        return 'Missing parameter : \'name\''
+
+    task = create_new_task(name)
+    return jsonify({
+        'result': task
+    })
 
 
 @task_router.route('/task/<int:task_id>', methods=['PUT'])
@@ -106,7 +125,34 @@ def update_task(task_id: int):
     """
     body = request.get_json()
 
-    return f'OK - PUT or DELETE task:{task_id}'
+    if not body:
+        return 'body is required', 400
+
+    if not body['id'] or body['id'] != task_id:
+        return "body's id is not match path"
+
+    name = ''
+    status = True
+
+    try:
+        name = get_body_value(body, 'name')
+        status_num = get_body_value(body, 'status')
+        if (status_num == 1):
+            status = True
+        elif (status_num == 0):
+            status = False
+        else:
+            raise KeyError("The value of status must be '1' or '2'")
+
+        task = update_task_status(task_id, name, status)
+
+        return jsonify({
+            'result': task
+        })
+    except KeyError as msg:
+        return msg.args[0], 400
+    except:
+        return '', 400
 
 
 @task_router.route('/task/<int:task_id>', methods=['DELETE'])
@@ -124,4 +170,6 @@ def delete_task(task_id: int):
         200:
             description: Specific todo task already remove
     """
-    return 'OK'
+
+    remove_task(task_id)
+    return '', 200

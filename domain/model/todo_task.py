@@ -1,5 +1,3 @@
-from typing_extensions import Self
-
 
 class Todo_Task():
     def __init__(self,  name: str) -> None:
@@ -7,12 +5,12 @@ class Todo_Task():
         self.name: str = name
         self.status: bool = False
 
-    def change_name(self, new_name: str) -> Self:
+    def change_name(self, new_name: str):
         if (not new_name or not len(new_name)):
             raise ValueError("Cannot change to empty")
         self.name = new_name
         return self
 
-    def change_task_status(self, isComplete: bool) -> Self:
+    def change_task_status(self, isComplete: bool):
         self.status = isComplete
         return self
