@@ -113,6 +113,50 @@ def test_update_endpoint_will_return_400_if_target_not_found(mocker: MockerFixtu
     assert 400 == response.status_code
 
 
+def test_update_particular_member_of_task_will_call_update_service_with_name_parameter(mocker: MockerFixture):
+    # arrange
+    test_client = get_app_client()
+    mocked_update = mocker.patch('router.update_task')
+    expected = {
+        "id": 3,
+        "name": "new name",
+        "status": 1
+    }
+    mocked_update.return_value = expected
+
+    # act
+    response = test_client.put('/task/3/name', json={
+        "name": "new name"
+    })
+
+    # assert
+    mocked_update.assert_called_once_with(3, name='new name')
+    assert 200 == response.status_code
+    assert {"result": expected} == response.json
+
+
+def test_update_particular_member_of_task_will_call_update_service_with_status_parameter(mocker: MockerFixture):
+    # arrange
+    test_client = get_app_client()
+    mocked_update = mocker.patch('router.update_task')
+    expected = {
+        "id": 3,
+        "name": "new name",
+        "status": 1
+    }
+    mocked_update.return_value = expected
+
+    # act
+    response = test_client.put('/task/3/status', json={
+        "status": 1
+    })
+
+    # assert
+    mocked_update.assert_called_once_with(3, status=True)
+    assert 200 == response.status_code
+    assert {"result": expected} == response.json
+
+
 def test_delete_endpoint_will_call_delete_service(mocker: MockerFixture):
     # arrange
     test_client = get_app_client()
