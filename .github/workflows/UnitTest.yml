@@ -34,3 +34,12 @@ jobs:
         with:
           pytest-coverage-path: ./pytest-coverage.txt
           junitxml-path: ./pytest.xml
+          
+      - name: Create Test Report
+        uses: dorny/test-reporter@v1.5.0
+        if: always()
+        with:
+          name: Test Report                 # Name of the check run which will be created
+          path: "./pytest.xml"              # Path to test results (inside artifact .zip)
+          reporter: java-junit              # Format of test results
+          fail-on-error: true
