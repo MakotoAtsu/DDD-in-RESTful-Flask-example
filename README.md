@@ -79,7 +79,6 @@ DDD 自從被提出以來到現在會被大力推崇不是沒有原因的
 
 ## Step.1 : 領域建模
 
----
 
 DDD 的核心在於其領域模型 (Domain Model)  
 所以我們首先從這開始
@@ -164,7 +163,6 @@ Todo_Task 可以 change_name 與 change_status
 
 ## Step.2 : 建立你的基礎設施
 
----
 
 基礎設施是用來讓你的軟體與外部程式溝通用的  
 eg. Database、Event Bus 或是 其他 Microservice
@@ -234,7 +232,6 @@ Repository 以外的程式並不關注 Repository 如何存取資料，
 
 ## Step.3 : 設計你的 RESTful API
 
----
 
 REST 風格的 API 應該要能夠用 GET、POST、PUT、DELETE 的方式來訪問你的 Resource
 
@@ -303,7 +300,6 @@ ps: 這裡我的 Router 直接使用了單個文件，當你的軟體複雜時�
 
 ## Step.4 : 設計你的 Service Layer
 
----
 
 接下來是我們的重頭戲，我們現在已經有了 API Endpoint  
 但他還沒有實際內容
@@ -526,7 +522,6 @@ Service layer 的功能就是用來結合領域內與領域外的操作
 
 ## Step 5: 編寫你的測試
 
----
 
 最後，別忘記撰寫 test case 來保護你的程式  
 軟體發展的流程中，Domain Model 可能隨時改變  
