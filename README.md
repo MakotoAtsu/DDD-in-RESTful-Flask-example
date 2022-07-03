@@ -102,11 +102,10 @@ App
 
 <br>
 
-<script src="https://gist.github.com/MakotoAtsu/18ec6f810f0f68343cd2837f7109151d.js?file=todo_task.py"></script>
 
-```
-todo_task.py
----
+```py
+# todo_task.py
+# ---
 
 class Todo_Task():
     def __init__(self,  name: str) -> None:
@@ -126,9 +125,9 @@ class Todo_Task():
 
 於是我們加入該 Model 擁有的行為
 
-```
-todo_task.py
----
+```py
+# todo_task.py
+# ---
 
 class Todo_Task():
     def __init__(self,  name: str) -> None:
@@ -196,7 +195,7 @@ eg. Mongo , PostgreSQL 等等
 在 taskRepository.py 外面的程式碼並不關注 DB 如何訪問，  
 他們只知道呼叫 Repository 就可以存取 DB，所以你可以很方便地進行替換
 
-```
+```py
 taskRepository.py
 ---
 
